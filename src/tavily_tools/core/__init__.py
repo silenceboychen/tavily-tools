@@ -8,12 +8,12 @@
 """
 
 from .formatter import TavilyFormatter, quick_format
-from .search import SearchClient, interactive_search, batch_search
+from .search import SearchClient, batch_search, interactive_search
 
 __all__ = [
     "TavilyFormatter",
     "SearchClient",
-    "quick_format", 
+    "quick_format",
     "interactive_search",
     "batch_search",
-] 
+]

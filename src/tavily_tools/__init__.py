@@ -12,27 +12,28 @@ Tavily Tools - Tavily搜索结果格式化工具包
 
 使用示例：
     from tavily_tools import TavilyFormatter, SearchClient
-    
+
     client = SearchClient()
     response = client.search("Python编程")
-    
+
     formatter = TavilyFormatter(response)
     formatter.print_full()
     formatter.save_json()
 """
 
+from .config.settings import Config, get_config, get_tavily_client
+
 # 主要导出类和函数
 from .core.formatter import TavilyFormatter, quick_format
-from .core.search import SearchClient, interactive_search, batch_search
-from .config.settings import Config, get_config, get_tavily_client
+from .core.search import SearchClient, batch_search, interactive_search
 
 __all__ = [
     "TavilyFormatter",
-    "SearchClient", 
+    "SearchClient",
     "quick_format",
     "interactive_search",
     "batch_search",
     "Config",
     "get_config",
     "get_tavily_client",
-] 
+]

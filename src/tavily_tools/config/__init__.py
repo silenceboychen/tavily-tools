@@ -12,6 +12,6 @@ from .settings import Config, get_config, get_tavily_client, init_config
 __all__ = [
     "Config",
     "get_config",
-    "get_tavily_client", 
+    "get_tavily_client",
     "init_config",
-] 
+]

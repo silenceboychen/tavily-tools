@@ -3,259 +3,262 @@ Tavily搜索结果格式化器
 
 提供多种格式化输出选项，包括：
 - 控制台美化输出
-- JSON结构化保存  
+- JSON结构化保存
 - HTML报告生成
 - 搜索质量分析
 """
 
-import json
 import html
+import json
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
-from ..utils.helpers import ensure_directory, clean_filename, format_timestamp
+from ..utils.helpers import clean_filename, ensure_directory, format_timestamp
 
 
 class TavilyFormatter:
     """
     Tavily搜索结果格式化器
-    
+
     支持多种输出格式和质量分析功能
     """
-    
+
     def __init__(self, response: Optional[Dict[str, Any]] = None, save_path: Optional[str] = None):
         """
         初始化格式化器
-        
+
         Args:
             response: Tavily搜索响应数据
             save_path: 保存路径，默认使用配置中的路径
         """
         self.response = response
         self.save_path = save_path or self._get_default_save_path()
-        
+
         # 确保保存目录存在
         ensure_directory(self.save_path)
-    
+
     def _get_default_save_path(self) -> str:
         """获取默认保存路径"""
         try:
             from ..config.settings import get_config
+
             config = get_config()
             return config.results_save_path
         except ImportError:
             # 如果无法导入config，使用默认路径
-            return './results/'
-    
-    def load_response(self, response: Dict[str, Any]) -> 'TavilyFormatter':
+            return "./results/"
+
+    def load_response(self, response: Dict[str, Any]) -> "TavilyFormatter":
         """
         加载搜索响应数据
-        
+
         Args:
             response: Tavily搜索响应
-            
+
         Returns:
             self: 支持链式调用
         """
         self.response = response
         return self
-    
+
     def print_summary(self) -> None:
         """打印搜索摘要信息"""
         if not self.response:
             print("❌ 没有搜索数据")
             return
-            
+
         print("=" * 60)
         print(f"🔍 查询: {self.response.get('query', 'N/A')}")
         print(f"⏱️  用时: {self.response.get('response_time', 'N/A')}秒")
         print(f"📊 结果: {len(self.response.get('results', []))}条")
         print("=" * 60)
-    
+
     def print_results(self, max_content_length: int = 150) -> None:
         """
         打印搜索结果
-        
+
         Args:
             max_content_length: 内容摘要的最大长度
         """
         if not self.response:
             print("❌ 没有搜索数据")
             return
-            
-        results = self.response.get('results', [])
-        
+
+        results = self.response.get("results", [])
+
         for i, result in enumerate(results, 1):
             print(f"\n📄 [{i}] {result.get('title', '无标题')}")
             print(f"   🔗 {result.get('url', 'N/A')}")
             print(f"   ⭐ 评分: {result.get('score', 0):.3f}")
-            
-            content = result.get('content', '')
+
+            content = result.get("content", "")
             if content:
                 if len(content) > max_content_length:
                     content = content[:max_content_length] + "..."
                 print(f"   📝 {content}")
             print("-" * 50)
-    
+
     def print_full(self, max_content_length: int = 150) -> None:
         """
         打印完整的格式化结果
-        
+
         Args:
             max_content_length: 内容摘要的最大长度
         """
         self.print_summary()
-        
+
         # AI答案
-        if self.response and self.response.get('answer'):
+        if self.response and self.response.get("answer"):
             print(f"\n💡 AI答案:")
             print(f"{self.response['answer']}")
             print("-" * 50)
-        
+
         # 搜索结果
         self.print_results(max_content_length)
-        
+
         # 跟进问题
-        if self.response and self.response.get('follow_up_questions'):
+        if self.response and self.response.get("follow_up_questions"):
             print(f"\n❓ 相关问题:")
-            for i, question in enumerate(self.response['follow_up_questions'], 1):
+            for i, question in enumerate(self.response["follow_up_questions"], 1):
                 print(f"   {i}. {question}")
-    
+
     def to_dict(self) -> Optional[Dict[str, Any]]:
         """
         转换为结构化字典
-        
+
         Returns:
             格式化后的字典数据
         """
         if not self.response:
             return None
-            
+
         formatted = {
             "搜索信息": {
-                "查询": self.response.get('query'),
-                "响应时间": self.response.get('response_time'),
-                "结果数量": len(self.response.get('results', []))
+                "查询": self.response.get("query"),
+                "响应时间": self.response.get("response_time"),
+                "结果数量": len(self.response.get("results", [])),
             },
-            "AI答案": self.response.get('answer'),
+            "AI答案": self.response.get("answer"),
             "搜索结果": [],
-            "跟进问题": self.response.get('follow_up_questions', [])
+            "跟进问题": self.response.get("follow_up_questions", []),
         }
-        
-        for i, result in enumerate(self.response.get('results', []), 1):
-            formatted["搜索结果"].append({
-                "序号": i,
-                "标题": result.get('title'),
-                "链接": result.get('url'),
-                "评分": result.get('score'),
-                "内容摘要": result.get('content')
-            })
-        
+
+        for i, result in enumerate(self.response.get("results", []), 1):
+            formatted["搜索结果"].append(
+                {
+                    "序号": i,
+                    "标题": result.get("title"),
+                    "链接": result.get("url"),
+                    "评分": result.get("score"),
+                    "内容摘要": result.get("content"),
+                }
+            )
+
         return formatted
-    
-    def save_json(self, filename: Optional[str] = None, 
-                  formatted: bool = True) -> Optional[str]:
+
+    def save_json(self, filename: Optional[str] = None, formatted: bool = True) -> Optional[str]:
         """
         保存为JSON文件
-        
+
         Args:
             filename: 文件名，默认自动生成
             formatted: 是否使用格式化数据
-            
+
         Returns:
             保存的文件名
         """
         if not self.response:
             print("❌ 没有搜索数据")
             return None
-            
+
         if not filename:
-            query = self.response.get('query', 'search')
+            query = self.response.get("query", "search")
             filename = f"tavily_{clean_filename(query)}_{format_timestamp()}.json"
-        
+
         # 确保文件名不包含路径，然后拼接保存路径
         filename = Path(filename).name
         filepath = Path(self.save_path) / filename
-        
+
         try:
             data = self.to_dict() if formatted else self.response
-            with open(filepath, 'w', encoding='utf-8') as f:
+            with open(filepath, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-            
+
             print(f"💾 已保存到: {filepath}")
             return str(filepath)
-            
+
         except Exception as e:
             print(f"❌ 保存失败: {e}")
             return None
-    
-    def save_html(self, filename: Optional[str] = None, 
-                  title: Optional[str] = None) -> Optional[str]:
+
+    def save_html(
+        self, filename: Optional[str] = None, title: Optional[str] = None
+    ) -> Optional[str]:
         """
         生成HTML报告
-        
+
         Args:
             filename: 文件名，默认自动生成
             title: 报告标题
-            
+
         Returns:
             保存的文件名
         """
         if not self.response:
             print("❌ 没有搜索数据")
             return None
-            
+
         if not filename:
-            query = self.response.get('query', 'search')
+            query = self.response.get("query", "search")
             filename = f"tavily_{clean_filename(query)}_{format_timestamp()}.html"
-        
+
         if not title:
             title = f"Tavily搜索报告 - {self.response.get('query', '未知查询')}"
-        
+
         filename = Path(filename).name
         filepath = Path(self.save_path) / filename
-        
+
         try:
             html_content = self._generate_html_content(title)
-            with open(filepath, 'w', encoding='utf-8') as f:
+            with open(filepath, "w", encoding="utf-8") as f:
                 f.write(html_content)
-            
+
             print(f"📄 已生成HTML报告: {filepath}")
             return str(filepath)
-            
+
         except Exception as e:
             print(f"❌ HTML生成失败: {e}")
             return None
-    
+
     def _generate_html_content(self, title: str) -> str:
         """
         生成HTML内容
-        
+
         Args:
             title: 报告标题
-            
+
         Returns:
             完整的HTML内容
         """
         if not self.response:
             return ""
-        
+
         # 基础信息
-        query = html.escape(str(self.response.get('query', 'N/A')))
-        response_time = self.response.get('response_time', 'N/A')
-        results_count = len(self.response.get('results', []))
-        answer = html.escape(str(self.response.get('answer', '')))
-        
+        query = html.escape(str(self.response.get("query", "N/A")))
+        response_time = self.response.get("response_time", "N/A")
+        results_count = len(self.response.get("results", []))
+        answer = html.escape(str(self.response.get("answer", "")))
+
         # 搜索结果HTML
         results_html = ""
-        for i, result in enumerate(self.response.get('results', []), 1):
-            title_text = html.escape(str(result.get('title', '无标题')))
-            url = html.escape(str(result.get('url', '#')))
-            score = result.get('score', 0)
-            content = html.escape(str(result.get('content', '')))
-            
+        for i, result in enumerate(self.response.get("results", []), 1):
+            title_text = html.escape(str(result.get("title", "无标题")))
+            url = html.escape(str(result.get("url", "#")))
+            score = result.get("score", 0)
+            content = html.escape(str(result.get("content", "")))
+
             results_html += f"""
             <div class="result-item">
                 <h3 class="result-title">
@@ -269,19 +272,19 @@ class TavilyFormatter:
                 <div class="result-content">{content}</div>
             </div>
             """
-        
+
         # 跟进问题HTML
         follow_up_html = ""
-        if self.response.get('follow_up_questions'):
+        if self.response.get("follow_up_questions"):
             follow_up_html = "<h2>💡 相关问题</h2><ul class='follow-up-questions'>"
-            for question in self.response['follow_up_questions']:
+            for question in self.response["follow_up_questions"]:
                 question_text = html.escape(str(question))
                 follow_up_html += f"<li>{question_text}</li>"
             follow_up_html += "</ul>"
-        
+
         # 生成时间
         generation_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
+
         return f"""
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -480,72 +483,74 @@ class TavilyFormatter:
 </body>
 </html>
         """
-    
+
     def analyze_quality(self) -> Dict[str, Any]:
         """
         分析搜索质量
-        
+
         Returns:
             质量分析报告
         """
         if not self.response:
             return {}
-        
-        results = self.response.get('results', [])
+
+        results = self.response.get("results", [])
         if not results:
             return {
                 "结果总数": 0,
                 "平均评分": 0,
                 "评分分布": {"高质量(>0.7)": 0, "中等质量(0.4-0.7)": 0, "低质量(<0.4)": 0},
-                "响应时间": self.response.get('response_time', 'N/A')
+                "响应时间": self.response.get("response_time", "N/A"),
             }
-        
+
         # 计算评分统计
-        scores = [result.get('score', 0) for result in results]
+        scores = [result.get("score", 0) for result in results]
         avg_score = sum(scores) / len(scores)
-        
+
         # 评分分布
         high_quality = sum(1 for score in scores if score > 0.7)
         medium_quality = sum(1 for score in scores if 0.4 <= score <= 0.7)
         low_quality = sum(1 for score in scores if score < 0.4)
-        
+
         return {
             "结果总数": len(results),
             "平均评分": avg_score,
             "评分分布": {
                 "高质量(>0.7)": high_quality,
                 "中等质量(0.4-0.7)": medium_quality,
-                "低质量(<0.4)": low_quality
+                "低质量(<0.4)": low_quality,
             },
-            "响应时间": self.response.get('response_time', 'N/A')
+            "响应时间": self.response.get("response_time", "N/A"),
         }
 
 
-def quick_format(response: Dict[str, Any], 
-                save_json: bool = False,
-                save_html: bool = False,
-                print_output: bool = True) -> TavilyFormatter:
+def quick_format(
+    response: Dict[str, Any],
+    save_json: bool = False,
+    save_html: bool = False,
+    print_output: bool = True,
+) -> TavilyFormatter:
     """
     快速格式化函数
-    
+
     Args:
         response: Tavily搜索响应
         save_json: 是否保存JSON文件
         save_html: 是否生成HTML报告
         print_output: 是否打印输出
-        
+
     Returns:
         格式化器实例
     """
     formatter = TavilyFormatter(response)
-    
+
     if print_output:
         formatter.print_full()
-    
+
     if save_json:
         formatter.save_json()
-        
+
     if save_html:
         formatter.save_html()
-    
-    return formatter 
+
+    return formatter

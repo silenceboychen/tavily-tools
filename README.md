@@ -58,7 +58,7 @@ tavily-tools/
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-org/tavily-tools.git
+git clone https://github.com/silenceboychen/tavily-tools.git
 cd tavily-tools
 
 # 创建虚拟环境
@@ -284,7 +284,7 @@ tavily-tools -q "查询" --quiet            # 安静模式
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-org/tavily-tools.git
+git clone https://github.com/silenceboychen/tavily-tools.git
 cd tavily-tools
 
 # 安装开发依赖
@@ -418,7 +418,7 @@ print(f"\n📁 搜索历史已导出: {history_file}")
 
 ## 🤝 贡献指南
 
-我们欢迎任何形式的贡献！请查看以下指南：
+欢迎任何形式的贡献！请查看以下指南：
 
 1. **Fork** 项目
 2. 创建功能分支: `git checkout -b feature/amazing-feature`
@@ -434,20 +434,6 @@ print(f"\n📁 搜索历史已导出: {history_file}")
 - 🎨 界面优化
 - ⚡ 性能优化
 - 🧪 测试覆盖
-
-## 📝 更新日志
-
-### [0.1.0] - 2024-12-03
-
-#### 新增
-- 🎉 初始版本发布
-- 🔍 完整的搜索功能封装
-- 🎨 多格式输出支持（控制台、JSON、HTML）
-- 📊 搜索质量分析功能
-- 🛠️ 完整的CLI工具
-- 📚 批量搜索和搜索历史管理
-- 🧪 完善的测试套件
-- 📖 详细的文档和示例
 
 ## 🆘 问题排查
 
@@ -497,25 +483,15 @@ tavily-tools --validate-env
 ## 🔗 相关链接
 
 - [Tavily官网](https://tavily.com/) - 获取API密钥
-- [项目主页](https://github.com/your-org/tavily-tools)
-- [问题反馈](https://github.com/your-org/tavily-tools/issues)
-- [文档站点](https://tavily-tools.readthedocs.io)
-
-## 💡 致谢
-
-感谢以下项目和技术：
-
-- [Tavily](https://tavily.com/) - 提供强大的AI搜索API
-- [Python](https://python.org) - 优秀的编程语言
-- [Click](https://click.palletsprojects.com/) - 命令行界面框架
-- [Rich](https://rich.readthedocs.io/) - 终端美化库（计划集成）
+- [项目主页](https://github.com/silenceboychen/tavily-tools)
+- [问题反馈](https://github.com/silenceboychen/tavily-tools/issues)
 
 ---
 
 <div align="center">
 
-**⭐ 如果这个项目对您有帮助，请给我们一个Star！ ⭐**
+**⭐ 如果这个项目对您有帮助，请给我一个Star！ ⭐**
 
-Made with ❤️ by AI工具链研发团队
+Made with ❤️ by Morty
 
 </div> 
