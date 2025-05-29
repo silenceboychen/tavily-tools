@@ -1,497 +1,521 @@
-# Tavily搜索结果格式化工具
+# Tavily Tools
 
-一个功能强大的Tavily搜索结果格式化和分析工具，提供多种输出格式和质量分析功能。
+> 🚀 强大的Tavily搜索结果格式化工具包 - 提供智能搜索和多格式输出功能
 
-## 🚀 功能特性
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-- **🎨 多种输出格式**: 支持控制台输出、JSON、HTML报告
-- **📊 质量分析**: 自动分析搜索结果质量和评分分布
-- **⚡ 快速格式化**: 一键完成所有格式化操作
-- **🔄 批量处理**: 支持批量搜索和结果处理
-- **🎯 自定义显示**: 灵活的结果筛选和显示选项
-- **💾 智能保存**: 自动生成时间戳文件名
-- **🌐 国际化**: 支持中文界面和输出
+## 🌟 功能特性
 
-## 📁 文件结构
+- 🎨 **多种输出格式**: 控制台美化输出、JSON结构化保存、HTML报告生成
+- 📊 **搜索质量分析**: 自动分析搜索结果质量和评分分布  
+- ⚡ **快速格式化**: 一键完成搜索和格式化操作
+- 🔄 **批量处理**: 支持批量搜索和结果处理
+- 🎯 **交互式搜索**: 用户友好的交互式界面
+- 💾 **智能保存**: 自动生成时间戳文件名和目录管理
+- 🛠️ **CLI工具**: 完整的命令行接口支持
+- 📚 **搜索历史**: 搜索历史管理和导出功能
+- 🌐 **中文优化**: 专门优化的中文界面和输出
+
+## 📁 项目结构
 
 ```
-tavily/
-├── tavily_search.py         # 增强版主程序，支持交互式操作
-├── tavily_formatter.py     # 核心格式化工具类
-├── example_usage.py        # 详细使用示例
-├── config.py               # 配置管理模块（环境变量）
-├── env_template.txt        # 环境变量模板文件
-├── requirements.txt        # 依赖管理（传统方式）
-├── README.md              # 项目文档
-├── LICENSE                # MIT许可证
-└── .gitignore             # Git忽略文件
+tavily-tools/
+├── src/tavily_tools/           # 主包目录 (src-layout)
+│   ├── __init__.py            # 包初始化和主要导出
+│   ├── core/                  # 核心业务逻辑
+│   │   ├── __init__.py       
+│   │   ├── formatter.py       # 搜索结果格式化器
+│   │   └── search.py          # 搜索客户端封装
+│   ├── config/                # 配置管理
+│   │   ├── __init__.py       
+│   │   └── settings.py        # 环境变量和配置管理
+│   ├── utils/                 # 工具函数
+│   │   ├── __init__.py       
+│   │   └── helpers.py         # 通用辅助函数
+│   └── cli/                   # 命令行接口
+│       ├── __init__.py       
+│       └── main.py            # CLI主程序
+├── examples/                   # 使用示例
+│   ├── __init__.py           
+│   └── usage_examples.py      # 详细使用示例
+├── tests/                     # 测试套件
+│   ├── __init__.py           
+│   └── test_formatter.py      # 格式化器测试
+├── results/                   # 结果输出目录
+├── env.template               # 环境变量模板
+├── pyproject.toml             # 项目配置和依赖管理
+├── requirements.txt           # 基础依赖（兼容性）
+├── README.md                  # 项目文档
+├── LICENSE                    # MIT许可证
+└── .gitignore                 # Git忽略文件
 ```
 
 ## 🛠️ 安装与配置
 
-### 1. 环境管理（推荐使用uv）
-
-#### 方法一：使用uv（推荐）
-
-[uv](https://github.com/astral-sh/uv) 是一个极速的Python包管理器，比pip快10-100倍。
+### 方式一：开发安装（推荐）
 
 ```bash
-# 安装uv（如果尚未安装）
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# 克隆项目
+git clone https://github.com/your-org/tavily-tools.git
+cd tavily-tools
 
-# 或者使用pip安装
-pip install uv
-
-# 使用uv初始化项目（创建虚拟环境）
-uv venv --python=3.12.4
-
-# 激活虚拟环境
-# Linux/macOS:
-source .venv/bin/activate
-# Windows:
-.venv\Scripts\activate
-
-# 安装项目依赖
-uv pip install -r requirements.txt
-```
-
-#### 方法二：使用传统pip + venv
-
-```bash
 # 创建虚拟环境
-python -m venv venv
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate   # Windows
 
-# 激活虚拟环境
-# Linux/macOS:
-source venv/bin/activate
-# Windows:
-venv\Scripts\activate
+# 开发模式安装
+pip install -e .
 
-# 安装依赖
-pip install -r requirements.txt
+# 或安装完整开发依赖
+pip install -e ".[dev]"
 ```
 
-### 2. 配置API密钥
+### 方式二：直接安装
 
-#### 方法一：使用.env文件（推荐）
-
-1. 复制环境变量模板：
 ```bash
-cp env_template.txt .env
+# 安装基础版本
+pip install tavily-tools
+
+# 安装完整版本（包含开发工具）
+pip install "tavily-tools[dev]"
 ```
 
-2. 编辑.env文件，填入您的真实API密钥：
+### 配置API密钥
+
+1. **复制环境变量模板**:
 ```bash
-# 编辑.env文件
-TAVILY_API_KEY=your_actual_api_key_here
+cp env.template .env
+```
+
+2. **编辑.env文件**:
+```bash
+# 必需配置
+TAVILY_API_KEY=your_tavily_api_key_here
+
+# 可选配置
 DEFAULT_SEARCH_QUERY=deepseek
+RESULTS_SAVE_PATH=./results/
+MAX_SEARCH_RESULTS=10
 ```
 
-#### 方法二：直接设置环境变量
+3. **获取API密钥**:
+   - 访问 [Tavily官网](https://tavily.com/)
+   - 注册账户并获取API密钥
+   - 将密钥填入.env文件
+
+## 🚀 快速开始
+
+### 命令行使用
 
 ```bash
-# Linux/macOS
-export TAVILY_API_KEY="your_actual_api_key_here"
+# 交互式搜索（推荐）
+tavily-tools
 
-# Windows
-set TAVILY_API_KEY=your_actual_api_key_here
+# 快速搜索
+tavily-tools -q "Python机器学习"
+
+# 批量搜索并保存结果
+tavily-tools -b "AI发展" "量子计算" "区块链" --save-json --save-html
+
+# 显示配置信息
+tavily-tools --config
+
+# 验证环境配置
+tavily-tools --validate-env
 ```
 
-### 3. 获取API密钥
+### Python编程使用
 
-1. 访问 [Tavily官网](https://tavily.com/)
-2. 注册账户并登录
-3. 在控制台获取您的API密钥
-4. 将密钥添加到.env文件中
-
-### 4. 结果文件管理
-
-默认情况下，所有生成的结果文件（JSON、HTML报告）都会保存在`results/`目录下。
-
-#### 目录结构
-
-```
-results/
-├── tavily_deepseek_20241203_143022.json      # JSON格式结果
-└── tavily_report_deepseek_20241203_143022.html # HTML报告
-```
-
-#### 自定义保存路径
-
-您可以通过以下方式自定义结果保存路径：
-
-**方法一：修改.env文件**
-```bash
-# 修改.env文件中的RESULTS_SAVE_PATH
-RESULTS_SAVE_PATH=./data/search_results/
-```
-
-**方法二：程序中指定**
-```python
-from tavily_formatter import TavilyFormatter
-
-# 指定自定义保存路径
-formatter = TavilyFormatter(save_path="./custom_results/")
-formatter.load_response(response)
-formatter.to_json()  # 将保存到custom_results目录
-```
-
-#### 文件命名规则
-
-- **JSON文件**: `tavily_{查询词}_{时间戳}.json`
-- **HTML报告**: `tavily_report_{查询词}_{时间戳}.html`
-- **时间戳格式**: `YYYYMMDD_HHMMSS`
-
-#### 文件管理建议
-
-- 程序运行时会自动创建results目录
-- Git会忽略results目录下的结果文件
-- 建议定期清理旧的结果文件以节省空间
-- 重要结果请手动备份到其他位置
-
-## 📖 快速开始
-
-### 方法一：使用uv（推荐）
-
-```bash
-# 使用uv安装并运行
-uv run tavily_search.py
-
-# 运行示例
-uv run python example_usage.py
-```
-
-### 方法二：传统方式
-
-```bash
-# 激活虚拟环境后运行主程序
-python3 tavily_search.py
-```
-
-### 基础使用
+#### 基础使用
 
 ```python
-# 方法一：使用配置管理模块（推荐）
-from config import get_tavily_client
-from tavily_formatter import TavilyFormatter
+from tavily_tools import TavilyFormatter, SearchClient
 
-# 自动加载环境变量并初始化客户端
-client = get_tavily_client()
+# 创建搜索客户端
+client = SearchClient()
 
 # 执行搜索
-response = client.search(query="人工智能发展趋势")
+response = client.search("人工智能最新发展")
 
 # 格式化输出
-formatter = TavilyFormatter().load_response(response)
+formatter = TavilyFormatter(response)
 formatter.print_full()
+
+# 保存结果
+formatter.save_json()
+formatter.save_html()
 ```
 
-```python
-# 方法二：手动使用环境变量
-import os
-from dotenv import load_dotenv
-from tavily import TavilyClient
-from tavily_formatter import TavilyFormatter
-
-# 加载环境变量
-load_dotenv()
-
-# 初始化客户端
-client = TavilyClient(os.getenv('TAVILY_API_KEY'))
-
-# 执行搜索和格式化
-response = client.search(query="人工智能发展趋势")
-formatter = TavilyFormatter().load_response(response)
-formatter.print_full()
-```
-
-### 一键格式化
+#### 高级功能
 
 ```python
-from tavily_formatter import quick_format
+from tavily_tools import quick_format, batch_search, interactive_search
 
-# 一键格式化并保存所有格式
-formatter = quick_format(
+# 快速格式化（一键完成）
+quick_format(
     response, 
     save_json=True, 
-    save_html=True
+    save_html=True, 
+    print_output=True
 )
+
+# 批量搜索
+topics = ["机器学习", "深度学习", "神经网络"]
+formatters = batch_search(topics, save_json=True)
+
+# 交互式搜索
+interactive_search()
 ```
 
-## 🔧 API 参考
+#### 搜索质量分析
 
-### TavilyFormatter 类
-
-#### 核心方法
-
-| 方法 | 描述 | 参数 | 返回值 |
-|------|------|------|--------|
-| `load_response(response)` | 加载搜索响应数据 | `response`: Tavily搜索响应 | `TavilyFormatter`: 支持链式调用 |
-| `print_summary()` | 打印搜索摘要信息 | 无 | `None` |
-| `print_results(max_content_length)` | 打印搜索结果 | `max_content_length`: 内容摘要最大长度 | `None` |
-| `print_full(max_content_length)` | 打印完整格式化结果 | `max_content_length`: 内容摘要最大长度 | `None` |
-
-#### 数据转换方法
-
-| 方法 | 描述 | 参数 | 返回值 |
-|------|------|------|--------|
-| `to_dict()` | 转换为结构化字典 | 无 | `Dict`: 格式化后的字典数据 |
-| `to_json(filename, formatted)` | 保存为JSON文件 | `filename`: 文件名<br>`formatted`: 是否使用格式化数据 | `str`: 保存的文件名 |
-| `to_html(filename, title)` | 生成HTML报告 | `filename`: 文件名<br>`title`: 报告标题 | `str`: 保存的文件名 |
-
-#### 分析方法
-
-| 方法 | 描述 | 参数 | 返回值 |
-|------|------|------|--------|
-| `analyze_quality()` | 分析搜索结果质量 | 无 | `Dict`: 质量分析报告 |
-
-### 便捷函数
-
-| 函数 | 描述 | 参数 | 返回值 |
-|------|------|------|--------|
-| `quick_format(response, save_json, save_html)` | 快速格式化搜索结果 | `response`: 搜索响应<br>`save_json`: 是否保存JSON<br>`save_html`: 是否保存HTML | `TavilyFormatter`: 格式化器实例 |
-
-## 📊 输出格式示例
-
-### 1. 控制台输出
-
-```
-================================================================================
-🔍 搜索查询: deepseek
-⏱️  响应时间: 1.77 秒
-📊 结果数量: 5
-================================================================================
-
-📄 结果 1:
-   标题: DeepSeek explained: Everything you need to know - TechTarget
-   链接: https://www.techtarget.com/WhatIs/feature/DeepSeek-explained-Everything-you-need-to-know
-   评分: 0.8875
-   摘要: What is DeepSeek? DeepSeek DeepSeek, a Chinese AI firm, is disrupting the industry with its low-cost, open source large language models...
-----------------------------------------
-
-📈 搜索质量分析:
-   结果总数: 5
-   平均评分: 0.691
-   高质量结果: 2条
-   中等质量结果: 3条
-   低质量结果: 0条
-```
-
-### 2. JSON输出格式
-
-```json
-{
-  "搜索信息": {
-    "查询": "deepseek",
-    "响应时间": 1.77,
-    "结果数量": 5
-  },
-  "AI答案": null,
-  "搜索结果": [
-    {
-      "序号": 1,
-      "标题": "DeepSeek explained: Everything you need to know",
-      "链接": "https://www.techtarget.com/...",
-      "评分": 0.8875,
-      "内容摘要": "What is DeepSeek? DeepSeek..."
-    }
-  ],
-  "跟进问题": []
-}
-```
-
-### 3. HTML报告
-
-生成美观的HTML报告，包含：
-- 响应式设计，支持移动端
-- 搜索摘要信息面板
-- 结构化的搜索结果展示
-- 可点击的链接
-- 时间戳和质量评估
-
-## 💡 使用场景
-
-### 1. 研究和分析
 ```python
-# 学术研究场景
-response = client.search(query="机器学习最新论文 2024")
-formatter = TavilyFormatter().load_response(response)
-
-# 只显示高质量结果
+# 详细质量分析
 quality = formatter.analyze_quality()
+print(f"平均评分: {quality['平均评分']:.3f}")
 print(f"高质量结果: {quality['评分分布']['高质量(>0.7)']}条")
 
-# 生成研究报告
-formatter.to_html(title="机器学习研究报告")
+# 搜索历史管理
+client = SearchClient()
+client.search("查询1")
+client.search("查询2")
+
+# 查看搜索历史
+history = client.get_search_history()
+for item in history:
+    print(f"{item['query']}: {item['results_count']}条结果")
+
+# 导出搜索历史
+client.export_history("my_search_history.json")
 ```
 
-### 2. 内容整理
+## 📚 详细文档
+
+### 核心类和函数
+
+#### TavilyFormatter
+
+搜索结果格式化器，提供多种输出格式。
+
 ```python
-# 批量搜索不同主题
-topics = ["AI安全", "自动驾驶", "量子计算"]
+formatter = TavilyFormatter(response, save_path="./results/")
 
-for topic in topics:
-    response = client.search(query=topic)
-    formatter = TavilyFormatter().load_response(response)
-    formatter.to_json(filename=f"research_{topic}.json")
+# 打印方法
+formatter.print_summary()      # 打印搜索摘要
+formatter.print_results()      # 打印搜索结果
+formatter.print_full()         # 打印完整信息
+
+# 数据转换
+data = formatter.to_dict()     # 转换为结构化字典
+
+# 文件输出
+formatter.save_json()          # 保存为JSON文件
+formatter.save_html()          # 生成HTML报告
+
+# 质量分析
+quality = formatter.analyze_quality()
 ```
 
-### 3. 质量监控
+#### SearchClient
+
+搜索客户端封装，提供统一的搜索接口。
+
 ```python
-# 搜索质量监控
-response = client.search(query="某个查询")
-quality = TavilyFormatter().load_response(response).analyze_quality()
+client = SearchClient(api_key="your_key")  # 可选，默认从配置读取
 
-if quality['平均评分'] < 0.5:
-    print("⚠️ 搜索质量较低，建议调整查询词")
+# 基础搜索
+response = client.search("查询关键词")
+
+# 搜索并格式化
+formatter = client.search_and_format(
+    query="查询关键词",
+    save_json=True,
+    save_html=True
+)
+
+# 搜索历史管理
+history = client.get_search_history()
+client.export_history("history.json")
+client.clear_history()
 ```
 
-## ⚙️ 配置选项
+#### 配置管理
 
-### 内容长度控制
 ```python
-# 控制内容摘要长度
-formatter.print_results(max_content_length=200)  # 默认150字符
+from tavily_tools.config import get_config, get_tavily_client
+
+# 获取配置
+config = get_config()
+config.show_config()
+
+# 获取预配置的客户端
+client = get_tavily_client()
 ```
 
-### 文件命名自定义
-```python
-# 自定义文件名
-formatter.to_json(filename="custom_search_results.json")
-formatter.to_html(filename="report.html", title="自定义标题")
-```
-
-### 质量分析阈值
-```python
-# 质量分析基于以下阈值:
-# - 高质量: score > 0.7
-# - 中等质量: 0.4 <= score <= 0.7  
-# - 低质量: score < 0.4
-```
-
-## 🔍 高级功能
-
-### 1. uv高级用法
+### 命令行选项
 
 ```bash
-# 开发模式安装（包含开发依赖）
-uv sync --dev
+# 基本操作
+tavily-tools -q "查询"                    # 单次搜索
+tavily-tools -b "查询1" "查询2"           # 批量搜索
+tavily-tools -i                          # 交互式模式
 
-# 添加新的依赖
-uv add requests beautifulsoup4
+# 输出选项
+tavily-tools -q "查询" --save-json        # 保存JSON
+tavily-tools -q "查询" --save-html        # 生成HTML报告
+tavily-tools -q "查询" --no-print         # 不打印到控制台
 
-# 添加开发依赖
-uv add --dev pytest black
+# 配置和信息
+tavily-tools --config                    # 显示配置
+tavily-tools --validate-env              # 验证环境
+tavily-tools --version                   # 显示版本
 
-# 创建生产环境的锁定文件
-uv lock
+# 调试选项
+tavily-tools -q "查询" --verbose          # 详细输出
+tavily-tools -q "查询" --quiet            # 安静模式
+```
 
-# 使用特定Python版本
-uv venv --python 3.11
+## 🔧 开发指南
 
-# 运行脚本（无需激活虚拟环境）
-uv run python tavily_search.py
+### 环境设置
 
-# 运行测试（如果有）
-uv run pytest
+```bash
+# 克隆项目
+git clone https://github.com/your-org/tavily-tools.git
+cd tavily-tools
 
+# 安装开发依赖
+pip install -e ".[dev]"
+
+# 安装pre-commit钩子
+pre-commit install
+```
+
+### 代码质量工具
+
+```bash
 # 代码格式化
-uv run black .
+black src/ tests/ examples/
+isort src/ tests/ examples/
 
-# 类型检查
-uv run mypy .
+# 静态检查
+flake8 src/ tests/ examples/
+mypy src/
+
+# 运行测试
+pytest tests/ --cov=src/tavily_tools
 ```
 
-### 2. 自定义结果筛选
-```python
-# 筛选高质量结果
-results = response.get('results', [])
-high_quality = [r for r in results if r.get('score', 0) > 0.8]
+### 构建和发布
 
-# 按评分排序
-sorted_results = sorted(results, key=lambda x: x.get('score', 0), reverse=True)
+```bash
+# 构建包
+python -m build
+
+# 本地安装测试
+pip install dist/tavily_tools-0.1.0-py3-none-any.whl
+
+# 发布到PyPI（需要配置token）
+twine upload dist/*
 ```
 
-### 3. 批量质量分析
+## 📊 使用示例
+
+### 示例1：基础搜索和格式化
+
 ```python
-# 批量分析多个搜索的质量
-def analyze_multiple_searches(queries):
-    quality_reports = []
-    for query in queries:
-        response = client.search(query=query)
-        quality = TavilyFormatter().load_response(response).analyze_quality()
-        quality_reports.append({
-            'query': query,
-            'quality': quality
-        })
-    return quality_reports
+from tavily_tools import SearchClient, TavilyFormatter
+
+# 执行搜索
+client = SearchClient()
+response = client.search("Python机器学习库推荐")
+
+# 创建格式化器
+formatter = TavilyFormatter(response)
+
+# 显示搜索摘要
+formatter.print_summary()
+# 输出：
+# ============================================================
+# 🔍 查询: Python机器学习库推荐
+# ⏱️  用时: 1.234秒
+# 📊 结果: 10条
+# ============================================================
+
+# 保存结果
+json_file = formatter.save_json()
+html_file = formatter.save_html()
 ```
 
-### 4. 结果去重
+### 示例2：批量搜索和质量分析
+
 ```python
-# 基于URL去重
-def deduplicate_results(response):
-    seen_urls = set()
-    unique_results = []
+from tavily_tools import batch_search
+
+# 定义搜索主题
+topics = [
+    "人工智能最新突破",
+    "量子计算发展现状", 
+    "区块链技术应用"
+]
+
+# 批量搜索
+formatters = batch_search(
+    topics=topics,
+    save_json=True,
+    save_html=False,
+    print_progress=True
+)
+
+# 分析结果质量
+for i, formatter in enumerate(formatters):
+    quality = formatter.analyze_quality()
+    print(f"{topics[i]}:")
+    print(f"  结果数: {quality['结果总数']}")
+    print(f"  平均评分: {quality['平均评分']:.3f}")
+    print(f"  高质量结果: {quality['评分分布']['高质量(>0.7)']}条")
+```
+
+### 示例3：自定义配置和高级功能
+
+```python
+from tavily_tools import SearchClient, TavilyFormatter
+from tavily_tools.config import get_config
+
+# 显示当前配置
+config = get_config()
+config.show_config()
+
+# 创建客户端并执行多次搜索
+client = SearchClient()
+
+queries = ["深度学习", "计算机视觉", "自然语言处理"]
+for query in queries:
+    print(f"\n🔍 搜索: {query}")
     
-    for result in response.get('results', []):
-        url = result.get('url', '')
-        if url not in seen_urls:
-            seen_urls.add(url)
-            unique_results.append(result)
+    # 执行搜索
+    response = client.search(query)
     
-    response['results'] = unique_results
-    return response
+    # 快速分析
+    formatter = TavilyFormatter(response)
+    quality = formatter.analyze_quality()
+    
+    print(f"✅ 完成 | 结果: {quality['结果总数']}条 | 评分: {quality['平均评分']:.3f}")
+
+# 查看搜索历史
+print("\n📚 搜索历史:")
+history = client.get_search_history()
+for i, item in enumerate(history, 1):
+    print(f"  {i}. {item['query']} - {item['results_count']}条结果")
+
+# 导出历史
+history_file = client.export_history()
+print(f"\n📁 搜索历史已导出: {history_file}")
 ```
 
-## 🐛 错误处理
+## 🤝 贡献指南
 
-工具内置了完善的错误处理机制：
+我们欢迎任何形式的贡献！请查看以下指南：
 
-```python
-try:
-    formatter = TavilyFormatter().load_response(response)
-    formatter.print_full()
-except Exception as e:
-    print(f"❌ 格式化出错: {e}")
-    # 程序会继续运行，不会崩溃
+1. **Fork** 项目
+2. 创建功能分支: `git checkout -b feature/amazing-feature`
+3. 提交更改: `git commit -m 'Add amazing feature'`
+4. 推送分支: `git push origin feature/amazing-feature`
+5. 开启 **Pull Request**
+
+### 贡献类型
+
+- 🐛 Bug修复
+- ✨ 新功能开发
+- 📚 文档改进
+- 🎨 界面优化
+- ⚡ 性能优化
+- 🧪 测试覆盖
+
+## 📝 更新日志
+
+### [0.1.0] - 2024-12-03
+
+#### 新增
+- 🎉 初始版本发布
+- 🔍 完整的搜索功能封装
+- 🎨 多格式输出支持（控制台、JSON、HTML）
+- 📊 搜索质量分析功能
+- 🛠️ 完整的CLI工具
+- 📚 批量搜索和搜索历史管理
+- 🧪 完善的测试套件
+- 📖 详细的文档和示例
+
+## 🆘 问题排查
+
+### 常见问题
+
+**Q: 报错"未找到TAVILY_API_KEY环境变量"**
+```bash
+# 解决方案：
+1. 复制环境变量模板：cp env.template .env
+2. 编辑.env文件，填入真实的API密钥
+3. 确保.env文件在项目根目录
 ```
 
-常见错误和解决方案：
-
-| 错误类型 | 原因 | 解决方案 |
-|----------|------|----------|
-| `❌ 没有搜索数据` | 未加载response数据 | 先调用`load_response()` |
-| `❌ 保存失败` | 文件权限或路径问题 | 检查文件路径和权限 |
-| `❌ API调用失败` | 网络或API key问题 | 检查网络连接和API key |
-
-## 📈 性能优化
-
-### 1. 大量结果处理
-```python
-# 对于大量搜索结果，建议分页处理
-formatter.print_results(max_content_length=100)  # 减少内容长度
+**Q: 模块导入错误**
+```bash
+# 解决方案：
+1. 确保已安装项目：pip install -e .
+2. 检查Python路径：python -c "import tavily_tools; print('OK')"
+3. 激活正确的虚拟环境
 ```
 
-### 2. 内存使用优化
-```python
-# 处理完成后释放内存
-formatter.response = None
+**Q: 搜索结果为空**
+```bash
+# 解决方案：
+1. 检查网络连接
+2. 验证API密钥有效性：tavily-tools --validate-env
+3. 尝试简化搜索查询
 ```
 
-### 3. 文件大小控制
-```python
-# 生成压缩的JSON
-import json
-data = formatter.to_dict()
-with open('compressed.json', 'w') as f:
-    json.dump(data, f, separators=(',', ':'))  # 去除空格
+### 调试模式
+
+```bash
+# 启用详细输出
+tavily-tools -q "查询" --verbose
+
+# 查看配置信息
+tavily-tools --config --verbose
+
+# 验证环境
+tavily-tools --validate-env
 ```
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+本项目基于 [MIT许可证](LICENSE) 开源。
+
+## 🔗 相关链接
+
+- [Tavily官网](https://tavily.com/) - 获取API密钥
+- [项目主页](https://github.com/your-org/tavily-tools)
+- [问题反馈](https://github.com/your-org/tavily-tools/issues)
+- [文档站点](https://tavily-tools.readthedocs.io)
+
+## 💡 致谢
+
+感谢以下项目和技术：
+
+- [Tavily](https://tavily.com/) - 提供强大的AI搜索API
+- [Python](https://python.org) - 优秀的编程语言
+- [Click](https://click.palletsprojects.com/) - 命令行界面框架
+- [Rich](https://rich.readthedocs.io/) - 终端美化库（计划集成）
 
 ---
 
-**🎯 让搜索结果更清晰，让信息处理更高效！** 
+<div align="center">
+
+**⭐ 如果这个项目对您有帮助，请给我们一个Star！ ⭐**
+
+Made with ❤️ by AI工具链研发团队
+
+</div> 

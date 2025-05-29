@@ -16,6 +16,7 @@ uv.lock
 results/*.json
 results/*.html
 results/*.pdf
+PROJECT_SUMMARY.md
 
 # IDE和编辑器文件
 .specstory/

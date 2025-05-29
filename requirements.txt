@@ -1,2 +1,7 @@
-tavily-python>=0.7.0      # Tavily搜索API客户端
-python-dotenv>=0.19.0     # 环境变量管理
+# Tavily Tools - 基础依赖
+# 
+# 注意：此文件用于兼容性，推荐使用 pyproject.toml 管理依赖
+# 安装命令：pip install -e .
+
+tavily-python>=0.3.0    # Tavily AI搜索API客户端
+python-dotenv>=1.0.0    # 环境变量管理(.env文件支持)
