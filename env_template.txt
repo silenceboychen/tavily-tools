@@ -1,0 +1,16 @@
+# Tavily搜索结果格式化工具 - 环境变量配置
+# 请将此文件重命名为 .env 并填入您的真实API密钥
+
+# Tavily API密钥
+# 获取方式：访问 https://tavily.com/ 注册账户并获取API密钥
+TAVILY_API_KEY=your_tavily_api_key_here
+
+# 可选配置
+# 默认搜索查询（如果未指定搜索词）
+DEFAULT_SEARCH_QUERY=deepseek
+
+# 结果保存路径（可选，默认为当前目录）
+# RESULTS_SAVE_PATH=./results/
+
+# 日志级别（可选，默认为INFO）
+# LOG_LEVEL=INFO 
