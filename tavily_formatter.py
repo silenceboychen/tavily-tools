@@ -5,16 +5,38 @@ Tavily搜索结果格式化工具
 
 import json
 import html
+import os
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional, Any
 
 
 class TavilyFormatter:
     """Tavily搜索结果格式化器"""
     
-    def __init__(self):
-        self.response = None
+    def __init__(self, save_path: Optional[str] = None):
+        """
+        初始化格式化器
         
+        Args:
+            save_path: 保存路径，默认使用配置中的路径
+        """
+        self.response = None
+        self.save_path = save_path or self._get_default_save_path()
+        
+        # 确保保存目录存在
+        Path(self.save_path).mkdir(parents=True, exist_ok=True)
+    
+    def _get_default_save_path(self) -> str:
+        """获取默认保存路径"""
+        try:
+            from config import get_config
+            config = get_config()
+            return config.results_save_path
+        except ImportError:
+            # 如果无法导入config，使用默认路径
+            return './results/'
+    
     def load_response(self, response: Dict[str, Any]) -> 'TavilyFormatter':
         """
         加载搜索响应数据
@@ -140,15 +162,21 @@ class TavilyFormatter:
         if not filename:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             query = self.response.get('query', 'search').replace(' ', '_')
+            # 清理查询字符串，移除特殊字符
+            query = "".join(c for c in query if c.isalnum() or c in ('_', '-'))[:50]
             filename = f"tavily_{query}_{timestamp}.json"
+        
+        # 确保文件名不包含路径，然后拼接保存路径
+        filename = Path(filename).name  # 只取文件名部分
+        filepath = Path(self.save_path) / filename
         
         try:
             data = self.to_dict() if formatted else self.response
-            with open(filename, 'w', encoding='utf-8') as f:
+            with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             
-            print(f"💾 已保存到: {filename}")
-            return filename
+            print(f"💾 已保存到: {filepath}")
+            return str(filepath)
             
         except Exception as e:
             print(f"❌ 保存失败: {e}")
@@ -173,7 +201,13 @@ class TavilyFormatter:
         if not filename:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             query = self.response.get('query', 'search').replace(' ', '_')
+            # 清理查询字符串，移除特殊字符
+            query = "".join(c for c in query if c.isalnum() or c in ('_', '-'))[:50]
             filename = f"tavily_report_{query}_{timestamp}.html"
+        
+        # 确保文件名不包含路径，然后拼接保存路径
+        filename = Path(filename).name  # 只取文件名部分
+        filepath = Path(self.save_path) / filename
         
         if not title:
             title = f"Tavily搜索报告 - {self.response.get('query', '搜索结果')}"
@@ -181,11 +215,11 @@ class TavilyFormatter:
         try:
             html_content = self._generate_html_content(title)
             
-            with open(filename, 'w', encoding='utf-8') as f:
+            with open(filepath, 'w', encoding='utf-8') as f:
                 f.write(html_content)
             
-            print(f"📄 HTML报告已保存到: {filename}")
-            return filename
+            print(f"📄 HTML报告已保存到: {filepath}")
+            return str(filepath)
             
         except Exception as e:
             print(f"❌ 生成HTML报告失败: {e}")

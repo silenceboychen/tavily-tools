@@ -15,6 +15,7 @@ class Config:
         """初始化配置，自动加载.env文件"""
         self._load_environment()
         self._validate_config()
+        self._ensure_directories()
     
     def _load_environment(self):
         """加载环境变量"""
@@ -43,6 +44,13 @@ class Config:
             print("当前API密钥仍为模板默认值")
             sys.exit(1)
     
+    def _ensure_directories(self):
+        """确保必要的目录存在"""
+        results_dir = Path(self.results_save_path)
+        if not results_dir.exists():
+            results_dir.mkdir(parents=True, exist_ok=True)
+            print(f"📁 已创建结果保存目录: {results_dir.absolute()}")
+    
     @property
     def tavily_api_key(self) -> str:
         """获取Tavily API密钥"""
@@ -56,7 +64,7 @@ class Config:
     @property
     def results_save_path(self) -> str:
         """获取结果保存路径"""
-        return os.getenv('RESULTS_SAVE_PATH', './')
+        return os.getenv('RESULTS_SAVE_PATH', './results/')
     
     @property
     def log_level(self) -> str:
@@ -68,7 +76,7 @@ class Config:
         print("📋 当前配置:")
         print(f"   API密钥: {'*' * 8}...{self.tavily_api_key[-4:] if len(self.tavily_api_key) > 4 else '****'}")
         print(f"   默认搜索: {self.default_search_query}")
-        print(f"   保存路径: {self.results_save_path}")
+        print(f"   保存路径: {Path(self.results_save_path).absolute()}")
         print(f"   日志级别: {self.log_level}")
 
 

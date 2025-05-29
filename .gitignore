@@ -12,6 +12,11 @@ __pycache__/
 uv.lock
 .python-version
 
+# 结果文件（保留目录结构，忽略生成的文件）
+results/*.json
+results/*.html
+results/*.pdf
+
 # IDE和编辑器文件
 .specstory/
 .cursorindexingignore
