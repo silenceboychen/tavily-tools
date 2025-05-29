@@ -20,6 +20,8 @@ results/*.pdf
 coverage.xml
 .coverage
 PROJECT_SUMMARY.md
+htmlcov/
+dist/
 
 # IDE和编辑器文件
 .specstory/

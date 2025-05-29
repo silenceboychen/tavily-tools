@@ -21,6 +21,11 @@ Tavily Tools - Tavily搜索结果格式化工具包
     formatter.save_json()
 """
 
+# 版本信息
+__version__ = "0.1.0"
+__author__ = "morty"
+__email__ = "silenceboychen@gmail.com"
+
 from .config.settings import Config, get_config, get_tavily_client
 
 # 主要导出类和函数
@@ -36,4 +41,5 @@ __all__ = [
     "Config",
     "get_config",
     "get_tavily_client",
+    "__version__",
 ]

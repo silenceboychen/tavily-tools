@@ -503,9 +503,22 @@ class TavilyFormatter:
                 "响应时间": self.response.get("response_time", "N/A"),
             }
 
-        # 计算评分统计
-        scores = [result.get("score", 0) for result in results]
-        avg_score = sum(scores) / len(scores)
+        # 计算评分统计 - 确保评分为数值类型
+        scores = []
+        for result in results:
+            score = result.get("score", 0)
+            try:
+                # 尝试转换为浮点数
+                score = float(score) if score is not None else 0.0
+                # 确保评分在合理范围内
+                score = max(0.0, min(1.0, score))
+            except (ValueError, TypeError):
+                # 如果转换失败，使用默认值0
+                score = 0.0
+            scores.append(score)
+
+        # 计算平均分
+        avg_score = sum(scores) / len(scores) if scores else 0.0
 
         # 评分分布
         high_quality = sum(1 for score in scores if score > 0.7)
